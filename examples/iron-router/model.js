@@ -1,17 +1,13 @@
-(function () {
-  "use strict";
-
-  Meteor.listings = new Meteor.Collection('listings', {
-    schema: {
-      agent: {
-        type: String,
-        label: "Agent",
-        max: 200
-      },
-      address: {
-        type: String,
-        label: "Address"
-      }
+Listings = new Meteor.Collection('listings', {
+  schema: {
+    agent: {
+      type: String,
+      label: "Agent"
+    },
+    address: {
+      type: String,
+      label: "Address",
+      max: 200
     }
-  });
-})();
+  }
+});

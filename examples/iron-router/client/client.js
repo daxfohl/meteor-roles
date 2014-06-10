@@ -55,9 +55,16 @@
     }
   });
 
+  Template.editListing.helpers({
+    listing: function () {
+      console.log(Session.get("currentListingId"));
+      return Listings.findOne({_id: Session.get("currentListingId")});
+    }
+  });
+
   Template.listings.helpers({
     listings: function () {
-      return Meteor.listings.find();
+      return Listings.find();
     }
   });
 

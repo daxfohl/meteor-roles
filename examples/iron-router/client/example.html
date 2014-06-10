@@ -115,21 +115,27 @@
 <template name="listings">
   <div class="listings row">
     <div class="offset4 span8">
-
-      <p class="note">Only Admins and those with the 'view-listings' role will see this page in their header nav.</p>
-
       <h2>Listings!</h2>
 
       <ul>
       {{#each listings}}
-        <li><p>{{address}}</p></li>
+        <li><p><a href="{{ pathFor 'editListing' id=this._id}}">{{address}}</a>{{agent}}</p></li>
       {{/each}}
       </ul>
-
-      {{> securityNote}}
+      <a href="{{ pathFor 'createListing' }}">Create</a>
     </div>
   </div>
 </template>
+
+<template name="createListing">
+  {{> quickForm collection="Listings" id="createListing" type="insert"}}
+</template>
+
+<template name="editListing">
+  {{> quickForm collection="Listings" doc=listing id="editListing" type="update"}}
+</template>
+
+
 
 <template name="manage">
   <div class="manage-users row">
@@ -160,6 +166,6 @@
     <p>You can see this in action by manually going to '/listings'.  Unauthorized users will still be able to see the page but the secret data will not be displayed.  In a production system, you should add a Roles check to your Router's definition of the 'listings' route but even then the raw template data is still sent to the user's browser.</p>
     <p>There is a <a href="https://trello.com/c/Lz07fBAm" target="_blank">feature card</a> on the Meteor team's Road Map which covers both server-side rendering and serving templates on-demand to the client so once that lands, the security restrictions may not need to be so tight.</p>
     <p>Sensitive data needs to be restricted on the server-side and only published to the client if the currently logged-in user has the proper permissions. See server.js for an example.</p>
-    <p>To test server-side publishing rules, in your browser console try, 'Meteor.listings.findOne()'. Unauthorized users will see 'undefined'.</p>
+    <p>To test server-side publishing rules, in your browser console try, 'Listings.findOne()'. Unauthorized users will see 'undefined'.</p>
   </div>
 </template>

@@ -1,11 +1,27 @@
 (function () {
   "use strict";
 
+
   Meteor.startup(function () {
 
-    if (Meteor.listings.find().fetch().length === 0) {
-      Meteor.listings.insert({address:"ec2 password: apple2", agent:"sdifj"});
-      Meteor.listings.insert({address:"domain registration pw: apple3", agent:"sdfjsijf"});
+    _.each([Listings], function (collection) {
+      collection.allow({
+        insert: function() {
+          return true;
+        },
+        update: function() {
+          return true;
+        },
+        remove: function() {
+          return true;
+        },
+        fetch: []
+      });
+    });
+
+    if (Listings.find().fetch().length === 0) {
+      Listings.insert({address:"ec2 password: apple2", agent:"sdifj"});
+      Listings.insert({address:"domain registration pw: apple3", agent:"sdfjsijf"});
     }
 
     if (Meteor.users.find().fetch().length === 0) {
@@ -42,7 +58,7 @@
     var user = Meteor.users.findOne({_id:this.userId});
     if (Roles.userIsInRole(user, ["admin","view-listings"])) {
       console.log('publishing listings', this.userId);
-      return Meteor.listings.find();
+      return Listings.find();
     }
     this.stop();
   });

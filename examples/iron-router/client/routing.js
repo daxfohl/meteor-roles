@@ -5,12 +5,6 @@
     Router.go(path);
   };
 
-  function emailVerified (user) {
-    return _.some(user.emails, function (email) {
-      return email.verified;
-    });
-  }
-
   var filters = {
     authenticate: function (pause) {
       if (Meteor.loggingIn()) {
@@ -25,10 +19,6 @@
           this.render('signin');
           this.layout('layout_no_header');
           pause();
-        } else if (!emailVerified(user)) {
-          console.log('filter: awaiting-verification');
-          this.render('awaiting-verification');
-          this.layout('layout');
         } else {
           console.log('filter: done');
           this.layout('layout');
@@ -45,16 +35,34 @@
   Router.map(function () {
     this.route('start', {
       path: '/',
-      onBeforeAction: [filters.authenticate, filters.testFilter]
+      onBeforeAction: filters.authenticate
     });
 
     this.route('start', {
-      onBeforeAction: [filters.authenticate, filters.testFilter]
+      onBeforeAction: filters.authenticate
     });
 
     this.route('signin');
 
     this.route('listings', {
+      onBeforeAction: filters.authenticate
+    });
+
+    this.route('createListing', {
+      path: '/listings/create',
+      onBeforeAction: filters.authenticate
+    });
+
+    this.route('editListing', {
+      path: '/listings/:id/edit',
+      onBeforeAction: [filters.authenticate, function(){
+        Session.set("currentListingId", this.params.id);
+        console.log(Session.get("currentListingId"));
+      }]
+    });
+
+    this.route('removeListing', {
+      path: '/listings/:id/delete',
       onBeforeAction: filters.authenticate
     });
 
