@@ -27,15 +27,15 @@ var filters = {
    * ensure user is logged in and 
    * email verified
    */
-  authenticate: function () {
+  authenticate: function (pause) {
     var user;
 
     if (Meteor.loggingIn()) {
 
       console.log('filter: loading');
       this.render('loading');
-      this.layout = 'layout_no_header';
-      this.stop();
+      this.layout('layout_no_header');
+      pause();
 
     } else {
 
@@ -45,8 +45,8 @@ var filters = {
 
         console.log('filter: signin');
         this.render('signin');
-        this.layout = 'layout_no_header';
-        this.stop();
+        this.layout('layout_no_header');
+        pause();
         return
       }
 
@@ -54,13 +54,13 @@ var filters = {
 
         console.log('filter: awaiting-verification');
         this.render('awaiting-verification');
-        this.layout = 'layout';
-        this.stop();
+        this.layout('layout');
+        pause();
 
       } else {
 
         console.log('filter: done');
-        this.layout = 'layout';
+        this.layout('layout');
 
       }
     }
@@ -77,12 +77,11 @@ var filters = {
 };  // end filters
 
 //AuthenticateController = RouteController.extend({
-//  before: authenticate
+//  onBeforeAction: authenticate
 //});
 
 
 Router.configure({
-  layout: 'layout',
   loadingTemplate: 'loading',
   notFoundTemplate: 'not_found'
 });
@@ -90,24 +89,26 @@ Router.configure({
 Router.map(function () {
   this.route('start', {
     path: '/',
-    before: [filters.authenticate, filters.testFilter]
+    onBeforeAction: [filters.authenticate, filters.testFilter]
   });
   this.route('start', {
-    before: [filters.authenticate, filters.testFilter]
+    onBeforeAction: [filters.authenticate, filters.testFilter]
   });
 
   this.route('signin');
 
   this.route('secrets', {
     //controller: 'AuthenticateController'
-    before: filters.authenticate
+    onBeforeAction: filters.authenticate
   });
 
   this.route('manage', {
-    before: filters.authenticate
+    onBeforeAction: filters.authenticate
   });
 
-  this.route('signout', App.signout);
+  this.route('signout', {
+      onBeforeAction: App.signout
+  });
 
   // why is this necessary when notFoundTemplate is
   // set in Router.configure?
