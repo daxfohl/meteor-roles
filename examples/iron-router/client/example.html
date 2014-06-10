@@ -160,8 +160,9 @@
     <legend>Add a Book</legend>
     {{> afQuickField name='id' readonly='true'}}
     {{> afQuickField name='email'}}
-    {{> afQuickField name='password'}}
-    {{> afQuickField name='password1'}}
+    <p id="error" class="form-group has-error"></p>
+    {{> afQuickField name='password' id='password'}}
+    {{> afQuickField name='password1' id='password1'}}
     {{> afQuickField name='isAdmin'}}
   </fieldset>
   <button type="submit" class="btn btn-primary">Edit</button>

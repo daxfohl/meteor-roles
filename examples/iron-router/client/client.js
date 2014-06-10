@@ -48,6 +48,23 @@
   AutoForm.addHooks(['createUserForm', 'editUserForm'], {
     onSuccess: function() {
       Router.go(Router.routes['manage'].path());
+    },
+    onSubmit: function (insertDoc, updateDoc, currentDoc) {
+      var doc = insertDoc || updateDoc;
+      if (doc.password != doc.password1) {
+        currentDoc.password = doc.password1;
+        doc.password = doc.password1;
+        this.template.find("#password").value = '';
+        this.template.find("#password1").value = '';
+        this.template.find("#error").innerText = "Passwords don't match";
+        return false;
+      }
+      return true;
+    },
+    onError: function(operation, error, template) {
+      console.log(template);
+      console.log(error);
+      console.log(operation);
     }
   });
 
