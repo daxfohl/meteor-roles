@@ -71,4 +71,16 @@
     }
     this.stop();
   });
+
+  Meteor.methods({
+    editUser: function(userData) {
+      // Important server-side check for security and data integrity
+      check(userData, UserSchema);
+      var id = userData.id;
+      Meteor.users.update({_id: id}, {$set:{'emails.0.address': userData.email}});
+      Accounts.setPassword(id, userData.password);
+      var fn = userData.isAdmin ? Roles.addUsersToRoles : Roles.removeUsersFromRoles;
+      fn(id, 'admin');
+    }
+  });
 })();

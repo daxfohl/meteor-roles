@@ -47,7 +47,21 @@
 
   AutoForm.addHooks(['createUserForm', 'editUserForm'], {
     onSuccess: function() {
-      Router.go(Router.routes['users'].path());
+      Router.go(Router.routes['manage'].path());
+    }
+  });
+
+  AutoForm.addHooks('createUserForm', {
+    onSubmit: function(userData) {
+      var id = Accounts.createUser({
+        email: userData.email,
+        password: userData.password
+      });
+      if (userData.isAdmin) {
+        Roles.addUsersToRoles(id, 'admin');
+      }
+      Router.go(Router.routes['manage'].path());
+      return false;
     }
   });
 
@@ -75,7 +89,13 @@
 
   Template.editUser.helpers({
     user: function () {
-      return Meteor.users.findOne({_id: Session.get("currentUserId")});
+      var user = Meteor.users.findOne({_id: Session.get("currentUserId")});
+      console.log(user.emails[0].address);
+      return {
+        id: user._id,
+        email: user.emails[0].address,
+        isAdmin: Roles.userIsInRole(user, 'admin')
+      };
     }
   });
 
