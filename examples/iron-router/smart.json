@@ -5,6 +5,8 @@
   },
   "packages": {
     "roles": {},
-    "iron-router": {}
+    "iron-router": {},
+    "collection2": {},
+    "autoform": {}
   }
 }

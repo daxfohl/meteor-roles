@@ -1,9 +1,17 @@
-;(function () {
-
+(function () {
   "use strict";
 
-// run on both the server and the client
-
-Meteor.secrets = new Meteor.Collection('secrets');
-
-}());
+  Meteor.listings = new Meteor.Collection('listings', {
+    schema: {
+      agent: {
+        type: String,
+        label: "Agent",
+        max: 200
+      },
+      address: {
+        type: String,
+        label: "Address"
+      }
+    }
+  });
+})();

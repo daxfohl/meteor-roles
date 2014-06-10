@@ -1,119 +1,117 @@
-"use strict";
+(function () {
+  "use strict";
 
-Meteor.navigateTo = function (path) {
-  // ...over-ridden in routing.js
-};
+  Meteor.navigateTo = function (path) {
+    // ...over-ridden in routing.js
+  };
 
-App.signout = function () {
-  console.log('logging out...');
-  Meteor.logout(function () {
-    console.log('...done');
-    Meteor.navigateTo('/');
-  });
-};
+  App.signout = function () {
+    console.log('logging out...');
+    Meteor.logout(function () {
+      console.log('...done');
+      Meteor.navigateTo('/');
+    });
+  };
 
 // stubs for IE
-if (!window.console) {
-  window.console = {}
-}
-if (!window.console.log) {
-  window.console.log = function (msg) {
-    $('#log').append('<br /><p>' + msg + '</p>')
-  };
-}
+  if (!window.console) {
+    window.console = {}
+  }
+  if (!window.console.log) {
+    window.console.log = function (msg) {
+      $('#log').append('<br /><p>' + msg + '</p>')
+    };
+  }
 
 // fix bootstrap dropdown unclickable issue on iOS
 // https://github.com/twitter/bootstrap/issues/4550
-$(document).on('touchstart.dropdown.data-api', '.dropdown-menu', function (e) {
+  $(document).on('touchstart.dropdown.data-api', '.dropdown-menu', function (e) {
     e.stopPropagation();
-});
+  });
 
-Deps.autorun(function () {
-  // register dependency on user so subscriptions
-  // will update once user has logged in
-  console.log("autorun started");
-  var user = Meteor.user();
-  console.log("autorun user");
-  // secrets
-  Meteor.subscribe('secrets');
-  console.log("autorun secrets");
-  // users, for manage-users page
-  Meteor.subscribe('users');
-  console.log("autorun users");
-});
+  Deps.autorun(function () {
+    // register dependency on user so subscriptions
+    // will update once user has logged in
+    var user = Meteor.user();
+    // listings
+    Meteor.subscribe('listings');
+    // users, for manage-users page
+    Meteor.subscribe('users');
+  });
 
-Template.signin.rendered = function () {
-  // auto-trigger accounts-ui login form dropdown
-  Accounts._loginButtonsSession.set('dropdownVisible', true);
-};
+  Template.signin.rendered = function () {
+    // auto-trigger accounts-ui login form dropdown
+    Accounts._loginButtonsSession.set('dropdownVisible', true);
+  };
 
-Template.header.events({
-  // template data, if any, is available in 'this'
-  'click .btn-navbar' : openCloseNav
-});
+  Template.header.events({
+    // template data, if any, is available in 'this'
+    'click .btn-navbar' : openCloseNav
+  });
 
-Template.header.helpers({
-  displayName: function () {
-    return displayName();
-  }
-});
+  Template.header.helpers({
+    displayName: function () {
+      return displayName();
+    }
+  });
 
-Template.secrets.helpers({
-  secrets: function () {
-    return Meteor.secrets.find();
-  }
-});
+  Template.listings.helpers({
+    listings: function () {
+      return Meteor.listings.find();
+    }
+  });
 
-Template.noteOfTheDay.helpers({
-  note: function () {
-    return "Greetings " + displayName() + "!";
-  }
-});
+  Template.noteOfTheDay.helpers({
+    note: function () {
+      return "Greetings " + displayName() + "!";
+    }
+  });
 
-Template.manage.helpers({
-  users: function () {
-    return Meteor.users.find();
-  },
-  email: function () {
-    return this.emails[0].address;
-  },
-  roles: function () {
-    if (!this.roles) return '<none>';
-    return this.roles.join(',');
-  }
-});
+  Template.manage.helpers({
+    users: function () {
+      return Meteor.users.find();
+    },
+    email: function () {
+      return this.emails[0].address;
+    },
+    roles: function () {
+      if (!this.roles) return '<none>';
+      return this.roles.join(',');
+    }
+  });
 
-function displayName (user) {
-  var name;
-  if (!user) {
-    user = Meteor.user();
+  function displayName (user) {
+    var name;
+    if (!user) {
+      user = Meteor.user();
+    }
+    if (!user) return "<missing user>";
+    if (user.profile) {
+      name = user.profile.name;
+    }
+    if ('string' === typeof name) {
+      name = name.trim();
+    } else {
+      name = null;
+    }
+    if (!name && user.emails && user.emails.length > 0) {
+      name = user.emails[0].address;
+    }
+    return name || "<missing name>";
   }
-  if (!user) return "<missing user>";
-  if (user.profile) {
-    name = user.profile.name;
-  }
-  if ('string' === typeof name) {
-    name = name.trim();
-  } else {
-    name = null;
-  }
-  if (!name && user.emails && user.emails.length > 0) {
-    name = user.emails[0].address;
-  }
-  return name || "<missing name>";
-}
 
 
 // insta-open/close nav rather than animate collapse.
 // this improves UX on mobile devices
-function openCloseNav (e) {
-  // Select .nav-collapse within same .navbar as current button
-  var nav = $(e.target).closest('.navbar').find('.nav-collapse');
-  if (nav.height() != 0) {
-    // If it has a height, hide it
-    nav.height(0);
-  } else {
-    // If it's collapsed, show it
-    nav.height('auto');
+  function openCloseNav (e) {
+    // Select .nav-collapse within same .navbar as current button
+    var nav = $(e.target).closest('.navbar').find('.nav-collapse');
+    if (nav.height() != 0) {
+      // If it has a height, hide it
+      nav.height(0);
+    } else {
+      // If it's collapsed, show it
+      nav.height('auto');
+    }
   }
-}
+})();

@@ -10,3 +10,5 @@ roles
 spiderable
 standard-app-packages
 iron-router
+collection2
+autoform
