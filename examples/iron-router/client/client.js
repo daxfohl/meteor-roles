@@ -40,9 +40,14 @@
   });
 
   AutoForm.addHooks(['createListingForm', 'editListingForm'], {
-    onSuccess: function(operation, result, template) {
-      console.log("onSubmit ALL FORMS!", arguments);
+    onSuccess: function() {
       Router.go(Router.routes['listings'].path());
+    }
+  });
+
+  AutoForm.addHooks(['createUserForm', 'editUserForm'], {
+    onSuccess: function() {
+      Router.go(Router.routes['users'].path());
     }
   });
 
@@ -64,8 +69,13 @@
 
   Template.editListing.helpers({
     listing: function () {
-      console.log(Session.get("currentListingId"));
       return Listings.findOne({_id: Session.get("currentListingId")});
+    }
+  });
+
+  Template.editUser.helpers({
+    user: function () {
+      return Meteor.users.findOne({_id: Session.get("currentUserId")});
     }
   });
 

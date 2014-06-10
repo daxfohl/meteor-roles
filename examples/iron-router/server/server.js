@@ -4,7 +4,7 @@
 
   Meteor.startup(function () {
 
-    _.each([Listings], function (collection) {
+    _.each([Listings, Meteor.users], function (collection) {
       collection.allow({
         insert: function() {
           return true;

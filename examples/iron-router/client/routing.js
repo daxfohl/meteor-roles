@@ -55,14 +55,30 @@
 
     this.route('editListing', {
       path: '/listings/:id/edit',
-      onBeforeAction: [filters.authenticate, function(){
+      onBeforeAction: [filters.authenticate, function() {
         Session.set("currentListingId", this.params.id);
-        console.log(Session.get("currentListingId"));
       }]
     });
 
     this.route('removeListing', {
       path: '/listings/:id/delete',
+      onBeforeAction: filters.authenticate
+    });
+
+    this.route('createUser', {
+      path: '/users/create',
+      onBeforeAction: filters.authenticate
+    });
+
+    this.route('editUser', {
+      path: '/users/:id/edit',
+      onBeforeAction: [filters.authenticate, function() {
+        Session.set("currentUserId", this.params.id);
+      }]
+    });
+
+    this.route('removeUser', {
+      path: '/users/:id/delete',
       onBeforeAction: filters.authenticate
     });
 

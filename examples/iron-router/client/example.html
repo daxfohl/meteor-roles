@@ -116,7 +116,6 @@
   <div class="listings row">
     <div class="offset4 span8">
       <h2>Listings!</h2>
-
       <ul>
       {{#each listings}}
         <li><p><a href="{{ pathFor 'editListing' id=this._id}}">{{address}}</a>{{agent}}</p></li>
@@ -135,28 +134,28 @@
   {{> quickForm collection="Listings" doc=listing id="editListingForm" type="update"}}
 </template>
 
-
-
 <template name="manage">
   <div class="manage-users row">
     <div class="offset4 span8">
-
-      <p class="note">Only Admins and those with the 'manage-users' role will see this page in their nav menu.</p>
-
       <h2>Manage Users</h2>
-
       <br />
-
       <h3>Current Users</h3>
       <ul>
       {{#each users}}
-      <li>{{email}} - Roles: {{roles}}</li>
+        <li><p><a href="{{ pathFor 'editUser' id=this._id}}">{{email}}</a>{{roles}}</p></li>
       {{/each}}
       </ul>
-
-      {{> securityNote}}
+      <a href="{{ pathFor 'createUser' }}">Create</a>
     </div>
   </div>
+</template>
+
+<template name="createUser">
+  {{> quickForm collection="Users" id="createUserForm" type="insert"}}
+</template>
+
+<template name="editUser">
+  {{> quickForm collection="Users" doc=user id="editUserForm" type="update"}}
 </template>
 
 <template name="securityNote">
