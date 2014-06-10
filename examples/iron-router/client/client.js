@@ -39,6 +39,13 @@
     Meteor.subscribe('users');
   });
 
+  AutoForm.addHooks(['createListingForm', 'editListingForm'], {
+    onSuccess: function(operation, result, template) {
+      console.log("onSubmit ALL FORMS!", arguments);
+      Router.go(Router.routes['listings'].path());
+    }
+  });
+
   Template.signin.rendered = function () {
     // auto-trigger accounts-ui login form dropdown
     Accounts._loginButtonsSession.set('dropdownVisible', true);
