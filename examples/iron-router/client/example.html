@@ -138,6 +138,17 @@
   {{/autoForm}}
 </template>
 
+<template name="deleteUser">
+  {{#autoForm schema="DeleteUserSchema" doc=user id="deleteUserForm" type="method" meteormethod="deleteUser"}}
+  <fieldset>
+    <legend>Delete User</legend>
+    {{> afQuickField name='id' readonly='true'}}
+    {{> afQuickField name='email' readonly='true'}}
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Delete</button>
+  {{/autoForm}}
+</template>
+
 <template name="adminChangePwd">
   {{#autoForm schema="AdminChangePasswordSchema" doc=user id="adminChangePwdForm" type="method" meteormethod="adminChangePwd"}}
   <fieldset>
@@ -151,13 +162,15 @@
   {{/autoForm}}
 </template>
 
-<template name="deleteUser">
-  {{#autoForm schema="DeleteUserSchema" doc=user id="deleteUserForm" type="method" meteormethod="deleteUser"}}
+<template name="userChangePwd">
+  {{#autoForm schema="UserChangePasswordSchema" doc=user id="userChangePwdForm" type="update"}}
   <fieldset>
-    <legend>Delete User</legend>
-    {{> afQuickField name='id' readonly='true'}}
-    {{> afQuickField name='email' readonly='true'}}
+    <legend>Update Password</legend>
+    <p id="error" class="text-error"></p>
+    {{> afQuickField name='oldPassword' type='password'}}
+    {{> afQuickField name='newPassword' type='password'}}
+    {{> afQuickField name='confirmPassword' type='password'}}
   </fieldset>
-  <button type="submit" class="btn btn-primary">Delete</button>
+  <button type="submit" class="btn btn-primary">Update</button>
   {{/autoForm}}
 </template>

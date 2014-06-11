@@ -44,6 +44,19 @@ AutoForm.addHooks(['createListingForm', 'editListingForm'], {
   }
 });
 
+AutoForm.addHooks(['userChangePwdForm'], {
+  onSubmit: function (formData) {
+    var template = this.template;
+    Accounts.changePassword(formData.oldPassword, formData.newPassword, function(error) {
+      if (error == null) {
+        Router.go(Router.routes['listings'].path());
+      }
+      template.find('#error').innerText = error;
+    });
+    return false;
+  }
+});
+
 AutoForm.addHooks(['createUserForm', 'editUserForm', 'deleteUserForm', 'adminChangePwdForm'], {
   onSuccess: function() {
     Router.go(Router.routes['manage'].path());

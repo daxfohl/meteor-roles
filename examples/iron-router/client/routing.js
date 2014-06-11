@@ -60,6 +60,10 @@ Router.map(function () {
     onBeforeAction: filters.authenticate
   });
 
+  this.route('manage', {
+    onBeforeAction: filters.authenticate
+  });
+
   this.route('createUser', {
     path: '/users/create',
     onBeforeAction: filters.authenticate
@@ -72,13 +76,6 @@ Router.map(function () {
     }]
   });
 
-  this.route('adminChangePwd', {
-    path: '/users/:id/changePwd',
-    onBeforeAction: [filters.authenticate, function() {
-      Session.set("currentUserId", this.params.id);
-    }]
-  });
-
   this.route('deleteUser', {
     path: '/users/:id/delete',
     onBeforeAction: [filters.authenticate, function() {
@@ -86,8 +83,16 @@ Router.map(function () {
     }]
   });
 
-  this.route('manage', {
-    onBeforeAction: filters.authenticate
+  this.route('adminChangePwd', {
+    path: '/users/:id/changePwd',
+    onBeforeAction: [filters.authenticate, function() {
+      Session.set("currentUserId", this.params.id);
+    }]
+  });
+
+  this.route('changePassword', {
+    onBeforeAction: filters.authenticate,
+    template: "userChangePwd"
   });
 
   this.route('signout', {
