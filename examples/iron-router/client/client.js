@@ -112,12 +112,6 @@ Template.listings.helpers({
   }
 });
 
-Template.noteOfTheDay.helpers({
-  note: function () {
-    return "Greetings " + displayName() + "!";
-  }
-});
-
 Template.manage.helpers({
   users: function () {
     return Meteor.users.find();
