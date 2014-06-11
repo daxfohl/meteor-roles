@@ -20,8 +20,13 @@ UserSchema = new SimpleSchema({
   password: {
     type: String
   },
-  password1: {
-    type: String
+  confirmPassword: {
+    type: String,
+    custom: function() {
+      if (this.value !== this.field('password').value) {
+        return "passwordMismatch";
+      }
+    }
   },
   isAdmin: {
     type: Boolean
@@ -31,3 +36,6 @@ UserSchema = new SimpleSchema({
     regEx: SimpleSchema.RegEx.Id
   }
 });
+UserSchema.messages({
+  passwordMismatch: "[label] does not match Password"
+})

@@ -75,7 +75,6 @@
   Meteor.methods({
     editUser: function(userData) {
       check(userData, UserSchema);
-      if (userData.password != userData.password1) throw "Passowrds don't match";
       var id = userData.id;
       Meteor.users.update({_id: id}, {$set:{'emails.0.address': userData.email}});
       Accounts.setPassword(id, userData.password);
