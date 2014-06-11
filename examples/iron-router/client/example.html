@@ -142,7 +142,10 @@
       <h3>Current Users</h3>
       <ul>
       {{#each users}}
-        <li><p>{{email}} [{{roles}}] / <a href="{{ pathFor 'editUser' id=this._id}}">Edit</a> / <a href="{{ pathFor 'adminChangePwd' id=this._id}}">Change Pwd</a></p></li>
+        <li><p>{{email}} [{{roles}}] /
+          <a href="{{ pathFor 'editUser' id=this._id}}">Edit</a> /
+          <a href="{{ pathFor 'adminChangePwd' id=this._id}}">Change Pwd</a> /
+          <a href="{{ pathFor 'deleteUser' id=this._id}}">Delete</a></p></li>
       {{/each}}
       </ul>
       <a href="{{ pathFor 'createUser' }}">Create</a>
@@ -175,7 +178,18 @@
     {{> afQuickField name='newPassword'}}
     {{> afQuickField name='confirmPassword'}}
   </fieldset>
-  <button type="submit" class="btn btn-primary">Edit</button>
+  <button type="submit" class="btn btn-primary">Update</button>
+  {{/autoForm}}
+</template>
+
+<template name="deleteUser">
+  {{#autoForm schema="DeleteUserSchema" doc=user id="deleteUserForm" type="method" meteormethod="deleteUser"}}
+  <fieldset>
+    <legend>Delete User</legend>
+    {{> afQuickField name='id' readonly='true'}}
+    {{> afQuickField name='email' readonly='true'}}
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Delete</button>
   {{/autoForm}}
 </template>
 

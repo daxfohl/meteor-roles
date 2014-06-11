@@ -47,6 +47,17 @@ EditUserSchema = new SimpleSchema({
   }
 });
 
+DeleteUserSchema = new SimpleSchema({
+  id: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Id
+  },
+  email: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email
+  }
+});
+
 AdminChangePasswordSchema = new SimpleSchema({
   userId: {
     type: String,

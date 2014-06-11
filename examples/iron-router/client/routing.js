@@ -84,9 +84,11 @@
       }]
     });
 
-    this.route('removeUser', {
+    this.route('deleteUser', {
       path: '/users/:id/delete',
-      onBeforeAction: filters.authenticate
+      onBeforeAction: [filters.authenticate, function() {
+        Session.set("currentUserId", this.params.id);
+      }]
     });
 
     this.route('manage', {

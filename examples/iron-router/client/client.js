@@ -44,7 +44,7 @@ AutoForm.addHooks(['createListingForm', 'editListingForm'], {
   }
 });
 
-AutoForm.addHooks(['createUserForm', 'editUserForm', 'adminChangePwdForm'], {
+AutoForm.addHooks(['createUserForm', 'editUserForm', 'deleteUserForm', 'adminChangePwdForm'], {
   onSuccess: function() {
     Router.go(Router.routes['manage'].path());
   }
@@ -80,6 +80,17 @@ Template.editUser.helpers({
       id: user._id,
       email: user.emails[0].address,
       isAdmin: Roles.userIsInRole(user, 'admin')
+    };
+  }
+});
+
+Template.deleteUser.helpers({
+  user: function () {
+    var user = Meteor.users.findOne({_id: Session.get("currentUserId")});
+    console.log(user.emails[0].address);
+    return {
+      id: user._id,
+      email: user.emails[0].address
     };
   }
 });

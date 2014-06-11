@@ -71,14 +71,6 @@ Meteor.publish("users", function () {
 
 //noinspection JSUnusedGlobalSymbols
 Meteor.methods({
-  editUser: function(formData) {
-    check(formData, EditUserSchema);
-    var id = formData.id;
-    Meteor.users.update({_id: id}, {$set:{'emails.0.address': formData.email}});
-    Accounts.setPassword(id, formData.password);
-    var fn = formData.isAdmin ? Roles.addUsersToRoles : Roles.removeUsersFromRoles;
-    fn(id, 'admin');
-  },
   newUser: function(formData) {
     check(formData, NewUserSchema);
     var id = Accounts.createUser({
@@ -88,6 +80,19 @@ Meteor.methods({
     if (formData.isAdmin) {
       Roles.addUsersToRoles(id, 'admin');
     }
+  },
+  deleteUser: function(formData) {
+    console.log("delete");
+    console.log("delete");
+    check(formData, DeleteUserSchema);
+    Meteor.users.remove(formData.id);
+  },
+  editUser: function(formData) {
+    check(formData, EditUserSchema);
+    var id = formData.id;
+    Meteor.users.update({_id: id}, {$set:{'emails.0.address': formData.email}});
+    var fn = formData.isAdmin ? Roles.addUsersToRoles : Roles.removeUsersFromRoles;
+    fn(id, 'admin');
   },
   adminChangePwd: function(formData) {
     check(formData, AdminChangePasswordSchema);
