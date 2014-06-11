@@ -142,7 +142,7 @@
       <h3>Current Users</h3>
       <ul>
       {{#each users}}
-        <li><p><a href="{{ pathFor 'editUser' id=this._id}}">{{email}}</a>{{roles}}</p></li>
+        <li><p>{{email}} [{{roles}}] / <a href="{{ pathFor 'editUser' id=this._id}}">Edit</a> / <a href="{{ pathFor 'adminChangePwd' id=this._id}}">Change Pwd</a></p></li>
       {{/each}}
       </ul>
       <a href="{{ pathFor 'createUser' }}">Create</a>
@@ -151,18 +151,29 @@
 </template>
 
 <template name="createUser">
-  {{> quickForm schema="UserSchema" id="createUserForm" type="insert"}}
+  {{> quickForm schema="NewUserSchema" id="createUserForm" type="method" meteormethod="newUser"}}
 </template>
 
 <template name="editUser">
-  {{#autoForm schema="UserSchema" doc=user id="editUserForm" type="method" meteormethod="editUser"}}
+  {{#autoForm schema="EditUserSchema" doc=user id="editUserForm" type="method" meteormethod="editUser"}}
   <fieldset>
     <legend>Edit User</legend>
     {{> afQuickField name='id' readonly='true'}}
     {{> afQuickField name='email'}}
-    {{> afQuickField name='password' id='password'}}
-    {{> afQuickField name='confirmPassword' id='confirmPassword'}}
     {{> afQuickField name='isAdmin'}}
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Edit</button>
+  {{/autoForm}}
+</template>
+
+<template name="adminChangePwd">
+  {{#autoForm schema="AdminChangePasswordSchema" doc=user id="adminChangePwdForm" type="method" meteormethod="adminChangePwd"}}
+  <fieldset>
+    <legend>Update Password</legend>
+    {{> afQuickField name='userId' readonly='true'}}
+    {{> afQuickField name='userEmail' readonly='true'}}
+    {{> afQuickField name='newPassword'}}
+    {{> afQuickField name='confirmPassword'}}
   </fieldset>
   <button type="submit" class="btn btn-primary">Edit</button>
   {{/autoForm}}

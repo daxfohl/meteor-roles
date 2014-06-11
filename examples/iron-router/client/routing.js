@@ -77,6 +77,13 @@
       }]
     });
 
+    this.route('adminChangePwd', {
+      path: '/users/:id/changePwd',
+      onBeforeAction: [filters.authenticate, function() {
+        Session.set("currentUserId", this.params.id);
+      }]
+    });
+
     this.route('removeUser', {
       path: '/users/:id/delete',
       onBeforeAction: filters.authenticate

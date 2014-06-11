@@ -12,7 +12,7 @@ Listings = new Meteor.Collection('listings', {
   }
 });
 
-UserSchema = new SimpleSchema({
+NewUserSchema = new SimpleSchema({
   email: {
     type: String,
     regEx: SimpleSchema.RegEx.Email
@@ -30,12 +30,63 @@ UserSchema = new SimpleSchema({
   },
   isAdmin: {
     type: Boolean
-  },
+  }
+});
+
+EditUserSchema = new SimpleSchema({
   id: {
     type: String,
     regEx: SimpleSchema.RegEx.Id
+  },
+  email: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email
+  },
+  isAdmin: {
+    type: Boolean
   }
 });
-UserSchema.messages({
-  passwordMismatch: "[label] does not match Password"
+
+AdminChangePasswordSchema = new SimpleSchema({
+  userId: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Id
+  },
+  userEmail: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Email
+  },
+  newPassword: {
+    type: String
+  },
+  confirmPassword: {
+    type: String,
+    custom: function() {
+      if (this.value !== this.field('newPassword').value) {
+        return "newPasswordMismatch";
+      }
+    }
+  }
+});
+
+UserChangePasswordSchema = new SimpleSchema({
+  oldPassword: {
+    type: String
+  },
+  newPassword: {
+    type: String
+  },
+  confirmPassword: {
+    type: String,
+    custom: function() {
+      if (this.value !== this.field('newPassword').value) {
+        return "newPasswordMismatch";
+      }
+    }
+  }
+});
+
+SimpleSchema.messages({
+  passwordMismatch: "[label] does not match Password",
+  newPasswordMismatch: "[label] does not match New Password"
 })

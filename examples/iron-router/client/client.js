@@ -1,178 +1,156 @@
-(function () {
-  "use strict";
+"use strict";
 
-  Meteor.navigateTo = function (path) {
-    // ...over-ridden in routing.js
-  };
+Meteor.navigateTo = function (path) {
+  // ...over-ridden in routing.js
+};
 
-  App.signout = function () {
-    console.log('logging out...');
-    Meteor.logout(function () {
-      console.log('...done');
-      Meteor.navigateTo('/');
-    });
-  };
+App.signout = function () {
+  console.log('logging out...');
+  Meteor.logout(function () {
+    console.log('...done');
+    Meteor.navigateTo('/');
+  });
+};
 
 // stubs for IE
-  if (!window.console) {
-    window.console = {}
-  }
-  if (!window.console.log) {
-    window.console.log = function (msg) {
-      $('#log').append('<br /><p>' + msg + '</p>')
-    };
-  }
+if (!window.console) {
+  window.console = {}
+}
+if (!window.console.log) {
+  window.console.log = function (msg) {
+    $('#log').append('<br /><p>' + msg + '</p>')
+  };
+}
 
 // fix bootstrap dropdown unclickable issue on iOS
 // https://github.com/twitter/bootstrap/issues/4550
-  $(document).on('touchstart.dropdown.data-api', '.dropdown-menu', function (e) {
-    e.stopPropagation();
-  });
+$(document).on('touchstart.dropdown.data-api', '.dropdown-menu', function (e) {
+  e.stopPropagation();
+});
 
-  Deps.autorun(function () {
-    // register dependency on user so subscriptions
-    // will update once user has logged in
-    var user = Meteor.user();
-    // listings
-    Meteor.subscribe('listings');
-    // users, for manage-users page
-    Meteor.subscribe('users');
-  });
+Deps.autorun(function () {
+  // register dependency on user so subscriptions
+  // will update once user has logged in
+  var user = Meteor.user();
+  // listings
+  Meteor.subscribe('listings');
+  // users, for manage-users page
+  Meteor.subscribe('users');
+});
 
-  AutoForm.addHooks(['createListingForm', 'editListingForm'], {
-    onSuccess: function() {
-      Router.go(Router.routes['listings'].path());
-    }
-  });
-
-  AutoForm.addHooks(['createUserForm', 'editUserForm'], {
-    onSuccess: function() {
-      Router.go(Router.routes['manage'].path());
-    },
-    onSubmit: function (insertDoc, updateDoc, currentDoc) {
-      var doc = insertDoc || updateDoc;
-      if (doc.password != doc.confirmPassword) {
-        currentDoc.password = doc.confirmPassword;
-        doc.password = doc.confirmPassword;
-        this.template.find("#password").value = '';
-        this.template.find("#confirmPassword").value = '';
-        this.template.find("#error").innerText = "Passwords don't match";
-        return false;
-      }
-      return true;
-    },
-    onError: function(operation, error, template) {
-      console.log(template);
-      console.log(error);
-      console.log(operation);
-    }
-  });
-
-  AutoForm.addHooks('createUserForm', {
-    onSubmit: function(userData) {
-      var id = Accounts.createUser({
-        email: userData.email,
-        password: userData.password
-      });
-      if (userData.isAdmin) {
-        Roles.addUsersToRoles(id, 'admin');
-      }
-      Router.go(Router.routes['manage'].path());
-      return false;
-    }
-  });
-
-  Template.signin.rendered = function () {
-    // auto-trigger accounts-ui login form dropdown
-    Accounts._loginButtonsSession.set('dropdownVisible', true);
-  };
-
-  Template.header.events({
-    // template data, if any, is available in 'this'
-    'click .btn-navbar' : openCloseNav
-  });
-
-  Template.header.helpers({
-    displayName: function () {
-      return displayName();
-    }
-  });
-
-  Template.editListing.helpers({
-    listing: function () {
-      return Listings.findOne({_id: Session.get("currentListingId")});
-    }
-  });
-
-  Template.editUser.helpers({
-    user: function () {
-      var user = Meteor.users.findOne({_id: Session.get("currentUserId")});
-      console.log(user.emails[0].address);
-      return {
-        id: user._id,
-        email: user.emails[0].address,
-        isAdmin: Roles.userIsInRole(user, 'admin')
-      };
-    }
-  });
-
-  Template.listings.helpers({
-    listings: function () {
-      return Listings.find();
-    }
-  });
-
-  Template.noteOfTheDay.helpers({
-    note: function () {
-      return "Greetings " + displayName() + "!";
-    }
-  });
-
-  Template.manage.helpers({
-    users: function () {
-      return Meteor.users.find();
-    },
-    email: function () {
-      return this.emails[0].address;
-    },
-    roles: function () {
-      if (!this.roles) return '<none>';
-      return this.roles.join(',');
-    }
-  });
-
-  function displayName (user) {
-    var name;
-    if (!user) {
-      user = Meteor.user();
-    }
-    if (!user) return "<missing user>";
-    if (user.profile) {
-      name = user.profile.name;
-    }
-    if ('string' === typeof name) {
-      name = name.trim();
-    } else {
-      name = null;
-    }
-    if (!name && user.emails && user.emails.length > 0) {
-      name = user.emails[0].address;
-    }
-    return name || "<missing name>";
+AutoForm.addHooks(['createListingForm', 'editListingForm'], {
+  onSuccess: function() {
+    Router.go(Router.routes['listings'].path());
   }
+});
+
+AutoForm.addHooks(['createUserForm', 'editUserForm', 'adminChangePwdForm'], {
+  onSuccess: function() {
+    Router.go(Router.routes['manage'].path());
+  }
+});
+
+Template.signin.rendered = function () {
+  // auto-trigger accounts-ui login form dropdown
+  Accounts._loginButtonsSession.set('dropdownVisible', true);
+};
+
+Template.header.events({
+  // template data, if any, is available in 'this'
+  'click .btn-navbar' : openCloseNav
+});
+
+Template.header.helpers({
+  displayName: function () {
+    return displayName();
+  }
+});
+
+Template.editListing.helpers({
+  listing: function () {
+    return Listings.findOne({_id: Session.get("currentListingId")});
+  }
+});
+
+Template.editUser.helpers({
+  user: function () {
+    var user = Meteor.users.findOne({_id: Session.get("currentUserId")});
+    console.log(user.emails[0].address);
+    return {
+      id: user._id,
+      email: user.emails[0].address,
+      isAdmin: Roles.userIsInRole(user, 'admin')
+    };
+  }
+});
+
+Template.adminChangePwd.helpers({
+  user: function () {
+    var user = Meteor.users.findOne({_id: Session.get("currentUserId")});
+    console.log(user.emails[0].address);
+    return {
+      userId: user._id,
+      userEmail: user.emails[0].address
+    };
+  }
+});
+
+Template.listings.helpers({
+  listings: function () {
+    return Listings.find();
+  }
+});
+
+Template.noteOfTheDay.helpers({
+  note: function () {
+    return "Greetings " + displayName() + "!";
+  }
+});
+
+Template.manage.helpers({
+  users: function () {
+    return Meteor.users.find();
+  },
+  email: function () {
+    return this.emails[0].address;
+  },
+  roles: function () {
+    if (!this.roles) return '<none>';
+    return this.roles.join(',');
+  }
+});
+
+function displayName (user) {
+  var name;
+  if (!user) {
+    user = Meteor.user();
+  }
+  if (!user) return "<missing user>";
+  if (user.profile) {
+    name = user.profile.name;
+  }
+  if ('string' === typeof name) {
+    name = name.trim();
+  } else {
+    name = null;
+  }
+  if (!name && user.emails && user.emails.length > 0) {
+    name = user.emails[0].address;
+  }
+  return name || "<missing name>";
+}
 
 
 // insta-open/close nav rather than animate collapse.
 // this improves UX on mobile devices
-  function openCloseNav (e) {
-    // Select .nav-collapse within same .navbar as current button
-    var nav = $(e.target).closest('.navbar').find('.nav-collapse');
-    if (nav.height() != 0) {
-      // If it has a height, hide it
-      nav.height(0);
-    } else {
-      // If it's collapsed, show it
-      nav.height('auto');
-    }
+function openCloseNav (e) {
+  // Select .nav-collapse within same .navbar as current button
+  var nav = $(e.target).closest('.navbar').find('.nav-collapse');
+  if (nav.height() != 0) {
+    // If it has a height, hide it
+    nav.height(0);
+  } else {
+    // If it's collapsed, show it
+    nav.height('auto');
   }
-})();
+}
