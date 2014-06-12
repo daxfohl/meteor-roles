@@ -119,12 +119,6 @@ Template.adminChangePwd.helpers({
   }
 });
 
-Template.listings.helpers({
-  listings: function () {
-    return Listings.find();
-  }
-});
-
 Template.manage.helpers({
   users: function () {
     return Meteor.users.find();
@@ -172,3 +166,30 @@ function openCloseNav (e) {
     nav.height('auto');
   }
 }
+
+//noinspection JSUnusedGlobalSymbols
+var ListingsFilter = new Meteor.FilterCollections(Listings, {
+  name: 'listings',
+  template: 'listings',
+  sort: {
+    order: ['desc', 'asc'],
+    defaults: [
+      ['agent', 'desc'],
+      ['address', 'desc']
+    ]
+  },
+  filters: {
+    "agent": {
+      title: 'Agent',
+      operator: ['$regex', 'i'],
+      condition: '$or',
+      searchable: 'required'
+    },
+    "address": {
+      title: 'Address',
+      operator: ['$regex', 'i'],
+      condition: '$or',
+      searchable: 'required'
+    }
+  }
+});

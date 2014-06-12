@@ -8,14 +8,18 @@
 <template name="layout">
   {{> header}}
 
-  {{> yield}}
+  <div class="container">
+    {{> yield}}
+  </div>
 
   <!--suppress XmlDuplicatedId -->
   <div id="log"></div>
 </template>
 
 <template name="layout_no_header">
-  {{> yield}}
+  <div class="container">
+    {{> yield}}
+  </div>
 
   <!--suppress XmlDuplicatedId -->
   <div id="log"></div>
@@ -26,13 +30,6 @@
     <div class="login-form">
       <h1>Sign In</h1>
       {{> loginButtons}}
-    </div>
-
-    <div class="example-users">
-      <p>Normal User: normal@example.com | apple1</p>
-      <p>View Listings: view@example.com | apple1</p>
-      <p>Manage Users: manage@example.com | apple1</p>
-      <p>Admin User: admin@example.com | apple1</p>
     </div>
   </div>
 </template>
@@ -50,47 +47,124 @@
 </template>
 
 <template name="header">
-  <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="btn btn-navbar">
+  <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
-        </a>
-        <a class="brand" href="/">Midwest Listings</a>
-        <div class="nav-collapse collapse">
-          <ul class="nav">
-            <li><a href="/listings">Listings</a></li>
-            {{#if isInRole 'admin,manage-users'}}
-            <li><a href="/manage">Manage Users</a></li>
-            {{/if}}
-
-            <li class="dropdown pull-right">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{displayName}}<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="/changePassword">Change Password</a></li>
-                <li><a class="signout" href="/signout">Sign out</a></li>
-              </ul>
-            </li>
-
-          </ul>
-        </div>
+        </button>
+        <a class="navbar-brand" href="/">Midwest Listings</a>
       </div>
+      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+        <ul class="nav navbar-nav">
+          <li><a href="/listings">Listings</a></li>
+          {{#if isInRole 'admin,manage-users'}}
+          <li><a href="/manage">Manage Users</a></li>
+          {{/if}}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown pull-right">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{displayName}}<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/changePassword">Change Password</a></li>
+              <li><a class="signout" href="/signout">Sign out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
     </div>
-  </div>
+  </header>
 </template>
 
 <template name="listings">
-  <div class="listings row">
-    <div class="offset4 span8">
-      <h2>Listings!</h2>
-      <ul>
-      {{#each listings}}
-        <li><p><a href="{{ pathFor 'editListing' id=this._id}}">{{address}}</a>{{agent}}</p></li>
-      {{/each}}
+  <div class="row">
+    <div class="page-header clearfix">
+      <h1>Listings<br/><small>Click on any of the table headers to change what you are sorting.</small></h1>
+    </div>
+
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search" value="{{fcFilterSearchable.criteria}}" data-fc-search-target="search-box">
+          </div>
+          <button type="submit" class="btn btn-default fc-search-trigger" data-fc-search-trigger="search-box">Submit</button>
+          {{#if fcFilterSearchable.criteria}}<button type="button" class="btn btn-default fc-search-clear">Reset</button>{{/if}}
+        </form>
+      </div>
+    </nav>
+    <a href="#" class="fc-sort-clear">Clear sorting</a><br/>
+    <a href="{{ pathFor 'createListing' }}">Create</a><br/>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover table-condensed">
+        <thead>
+          <tr>
+            <th class="fc-sort" data-fc-sort="address">
+              Address
+              {{#if fcSort.address.desc}}(desc){{/if}}
+              {{#if fcSort.address.asc}}(asc){{/if}}
+            </th>
+            <th class="fc-sort" data-fc-sort="agent">
+              Agent
+              {{#if fcSort.agent.desc}}(desc){{/if}}
+              {{#if fcSort.agent.asc}}(asc){{/if}}
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each fcResults}}
+          <tr>
+            <td>{{address}}</td>
+            <td>{{agent}}</td>
+            <td><a href="{{ pathFor 'editListing' id=this._id}}">edit</a></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    <a href="#" class="fc-sort-clear">Clear sorting</a><br/>
+    <a href="{{ pathFor 'createListing' }}">Create</a><br/>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <!-- items per page -->
+      <small><strong>Items per page</strong></small>
+      <select class="fc-pager-options form-control">
+        {{#each fcPager.options}}
+        <option value="{{value}}" {{status}}>{{value}}</option>
+        {{/each}}
+      </select>
+      <!-- /items per page -->
+    </div>
+    <div class="col-md-7 text-center">
+      {{#if fcPager.pages}}
+      <!-- numbered pager -->
+      <ul class="pagination">
+        <li><a href="#" class="fc-pager-first">&lt;&lt;</a></li>
+        <li><a href="#" class="fc-pager-previous">&lt;</a></li>
+        {{#each fcPager.pages}}
+        <li class="{{status}}"><a href="#" class="fc-pager-page" data-fc-pager-page="{{page}}">{{page}}</a></li>
+        {{/each}}
+        <li><a href="#" class="fc-pager-next">&gt;</a></li>
+        <li><a href="#" class="fc-pager-last">&gt;&gt;</a></li>
       </ul>
-      <a href="{{ pathFor 'createListing' }}">Create</a>
+      <!-- /numbered pager -->
+      {{/if}}
+    </div>
+    <div class="col-md-3">
+      <!-- pager status -->
+      <ul class="small">
+        <li>Current page is: <strong>{{fcPager.currentPage}}</strong>.</li>
+        <li>We are displaying <strong>{{fcPager.itemsPerPage}}</strong> results.</li>
+        <li>From <strong>{{fcPager.offsetStart}}</strong> to <strong>{{fcPager.offsetEnd}}</strong>.</li>
+        <li>We have found a total of <strong>{{fcPager.totalItems}}</strong> listings.</li>
+      </ul>
+      <!-- /pager status -->
     </div>
   </div>
 </template>

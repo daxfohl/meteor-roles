@@ -18,7 +18,7 @@
   text-align:center;
 }
 .signin .login-form {
-  width:200px;
+  width:170px;
   margin: 0 auto;
   position:relative;
   text-align:left;
@@ -48,20 +48,4 @@
 #err .close {
   float:none;
   margin-left:1em;
-}
-
-/**
- * note of the day
- */
-.note {
-  margin:1em 0em;
-  padding:1em;
-  border:1px solid #ccc;
-}
-
-/**
- * security-note
- */
-.security-note {
-  margin-top:10em;
 }
