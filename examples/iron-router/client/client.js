@@ -38,7 +38,7 @@ Deps.autorun(function () {
   Meteor.subscribe('users');
 });
 
-AutoForm.addHooks(['createListingForm', 'editListingForm'], {
+AutoForm.addHooks(['createListingForm', 'editListingForm', 'removeListingForm'], {
   onSuccess: function() {
     Router.go(Router.routes['listings'].path());
   }
@@ -80,6 +80,12 @@ Template.header.helpers({
 });
 
 Template.editListing.helpers({
+  listing: function () {
+    return Listings.findOne({_id: Session.get("currentListingId")});
+  }
+});
+
+Template.removeListing.helpers({
   listing: function () {
     return Listings.findOne({_id: Session.get("currentListingId")});
   }
@@ -177,6 +183,12 @@ var ListingsFilter = new Meteor.FilterCollections(Listings, {
       ['agent', 'desc'],
       ['address', 'desc']
     ]
+  },
+  pager: {
+    options: [100, 50, 25, 10, 5],
+    itemsPerPage: 5,
+    currentPage: 1,
+    showPages: 5,
   },
   filters: {
     "agent": {

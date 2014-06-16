@@ -57,7 +57,9 @@ Router.map(function () {
 
   this.route('removeListing', {
     path: '/listings/:id/delete',
-    onBeforeAction: filters.authenticate
+    onBeforeAction: [filters.authenticate, function() {
+      Session.set("currentListingId", this.params.id);
+    }]
   });
 
   this.route('manage', {

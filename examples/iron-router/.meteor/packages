@@ -10,6 +10,5 @@ standard-app-packages
 iron-router
 collection2
 autoform
-filter-collections
 bootstrap-3
 accounts-ui
