@@ -28,6 +28,22 @@ Meteor.startup(function () {
     });
   });
 
+  if (Meteor.users.find().fetch().length === 0) {
+    var users = [
+      {name:"Normal User",email:"user@a.co",roles:[]},
+      {name:"Admin User",email:"admin@a.co",roles:['admin']}
+    ];
+
+    _.each(users, function (userData) {
+      var id = Accounts.createUser({
+        email: userData.email,
+        password: "1234",
+        profile: { name: userData.name }
+      });
+      Roles.addUsersToRoles(id, userData.roles);
+    });
+  }
+
   //noinspection JSUnusedLocalSymbols
   Accounts.validateNewUser(function (user) {
     var loggedInUser = Meteor.user();
